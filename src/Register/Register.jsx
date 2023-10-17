@@ -1,15 +1,18 @@
 import { Container ,Form,Modal,Button,Table} from 'react-bootstrap'
 import React from 'react'
 import './Register.css'
+import { useState } from 'react'
 const Register = () => {
-    
+    const [modal,setModal]=useState(false);
+  
   return (
     <>
     <Container className='py-4'>
         <h1 className='text-center fw-bold'>Crud Operation in React JS</h1>
     
     <Button className='bg-danger border-0 btn-design'>
-        <i className='fa fa-plus'></i>
+        <i className='fa fa-plus' onClick={()=>setModal(true)
+}></i>
     </Button>
     <Table striped border hover className='mt-5 text-center'>
         <thead>
@@ -32,8 +35,9 @@ const Register = () => {
         </tbody>
 
     </Table>
-    <Modal show>
-        <Modal.Header closeButton>
+    <Modal show={modal} onHide={()=>setModal(false)
+}>
+        <Modal.Header closeButton >
            < Modal.Title >
            New Registration
 
@@ -77,7 +81,7 @@ const Register = () => {
                     
 
                 </Form.Group>
-                <Button className='w-100 mt-2 mb-3'>Regsiter</Button>
+                <Button className=' bg-danger border-0 w-100 mt-2 mb-3'>Regsiter</Button>
             </Form>
            </Modal.Body>
 
