@@ -2,12 +2,27 @@ import { Container ,Form,Modal,Button,Table} from 'react-bootstrap'
 import React from 'react'
 import './Register.css'
 import { useState } from 'react'
+import useHttp from '../Hooks/useHttp'
 const Register = () => {
     const [modal,setModal]=useState(false);
-  
+    const[request,setRequest]=useState(null);
+    const [httpResponse,httpError,httpLoader]=useHttp(request);
+    const register=(e)=>{
+        e.preventDefault();
+        return setRequest({
+            method:"get",
+            url:"https://jsonplaceholder.typicode.com/posts"
+        })
+
+    }
+    
   return (
     <>
     <Container className='py-4'>
+        {
+            
+            httpResponse&&JSON.stringify(httpLoader)
+        }
         <h1 className='text-center fw-bold'>Crud Operation in React JS</h1>
     
     <Button className='bg-danger border-0 btn-design'>
@@ -44,7 +59,7 @@ const Register = () => {
            </Modal.Title>
            </Modal.Header>
            <Modal.Body>
-            <Form>
+            <Form onSubmit={register}>
                 <Form.Group className='mb-3'>
                      <Form.Label>
                         Name
@@ -56,9 +71,20 @@ const Register = () => {
                 </Form.Group>
                 <Form.Group className='mb-3'>
                      <Form.Label>
-                       Name
+                       Email
                        </Form.Label>
                     <Form.Control />
+                       
+                       
+                    
+
+                </Form.Group>
+                <Form.Group className='mb-3'>
+                     <Form.Label>
+                       Mobile
+                       </Form.Label>
+                    <Form.Control />
+                       
                        
                     
 
@@ -81,7 +107,7 @@ const Register = () => {
                     
 
                 </Form.Group>
-                <Button className=' bg-danger border-0 w-100 mt-2 mb-3'>Regsiter</Button>
+                <Button type="submit" className=' bg-danger border-0 w-100 mt-2 mb-3'>Regsiter</Button>
             </Form>
            </Modal.Body>
 
