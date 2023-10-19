@@ -1,17 +1,81 @@
 import { Container ,Form,Modal,Button,Table} from 'react-bootstrap'
 import React from 'react'
 import './Register.css'
-import { useState } from 'react'
+import { useState,useEffect } from 'react'
 import useHttp from '../Hooks/useHttp'
 const Register = () => {
+
+   
+    const registerData={
+        name:"",
+        email:"",
+        password:"",
+        mobile:"",
+        profie: ""
+    }
+
+    const [input,setInput]=useState(registerData);
+
     const [modal,setModal]=useState(false);
     const[request,setRequest]=useState(null);
     const [httpResponse,httpError,httpLoader]=useHttp(request);
+
+    useEffect(()=>{
+        if(request){
+          
+            if(httpResponse)
+            {
+            alert("data insertes to database Successfully")
+            }
+
+
+            if(httpError){
+            alert("data not insertes")
+            }
+
+        }
+
+
+
+    },[request])
+
     const register=(e)=>{
         e.preventDefault();
         return setRequest({
-            method:"get",
-            url:"https://jsonplaceholder.typicode.com/posts"
+            method:"post",
+
+            url:"http://localhost:8080/register",
+            data:input
+        })
+
+    }
+    const uploadFile=e=>{
+        let input=e.target;
+        const file=input.files[0];
+        console.log(file);
+        const fReader=new FileReader();
+        fReader.readAsDataURL(file);
+        fReader.onload=e=>{
+            const url=e.target.result;
+            
+            setInput((oldData)=>{
+                return {...oldData,
+                    profile:url
+                }
+            })
+        }
+
+
+    }
+    const updateValue=(e)=>{
+        const input=e.target;
+        const key=input.name;
+        const value=input.value;
+        return setInput((oldData)=>{
+            return {
+                ...oldData,
+                [key]:value
+            }
         })
 
     }
@@ -19,10 +83,7 @@ const Register = () => {
   return (
     <>
     <Container className='py-4'>
-        {
-            
-            httpResponse&&JSON.stringify(httpLoader)
-        }
+       
         <h1 className='text-center fw-bold'>Crud Operation in React JS</h1>
     
     <Button className='bg-danger border-0 btn-design'>
@@ -64,7 +125,7 @@ const Register = () => {
                      <Form.Label>
                         Name
                        </Form.Label>
-                    <Form.Control />
+                    <Form.Control name="name" value={input.name} onChange={updateValue} />
                        
                     
 
@@ -73,7 +134,7 @@ const Register = () => {
                      <Form.Label>
                        Email
                        </Form.Label>
-                    <Form.Control />
+                    <Form.Control name="email" value={input.email} onChange={updateValue} />
                        
                        
                     
@@ -83,7 +144,7 @@ const Register = () => {
                      <Form.Label>
                        Mobile
                        </Form.Label>
-                    <Form.Control />
+                    <Form.Control name="mobile" value={input.mobile} onChange={updateValue}/>
                        
                        
                     
@@ -93,7 +154,7 @@ const Register = () => {
                      <Form.Label>
                        Password
                        </Form.Label>
-                    <Form.Control />
+                    <Form.Control name="password" value={input.password} onChange={updateValue} />
                        
                     
 
@@ -102,12 +163,15 @@ const Register = () => {
                      <Form.Label >
                       Profile
                        </Form.Label>
-                    <Form.Control type="file" />
+                    <Form.Control type="file" onChange={uploadFile} />
                        
                     
 
                 </Form.Group>
+            
                 <Button type="submit" className=' bg-danger border-0 w-100 mt-2 mb-3'>Regsiter</Button>
+            
+                
             </Form>
            </Modal.Body>
 
