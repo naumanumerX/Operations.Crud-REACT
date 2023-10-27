@@ -3,9 +3,10 @@ import React from 'react'
 import './Register.css'
 import { useState,useEffect } from 'react'
 import useHttp from '../Hooks/useHttp'
+import { useRef } from 'react'
 const Register = () => {
 
-   
+   let num=useRef(1);
     const registerData={
         name:"",
         email:"",
@@ -13,19 +14,31 @@ const Register = () => {
         mobile:"",
         profie: ""
     }
-
     const [input,setInput]=useState(registerData);
 
     const [modal,setModal]=useState(false);
-    const[request,setRequest]=useState(null);
+    const [data,setData]=useState(null);
+    const[request,setRequest]=useState({
+        method:"get",
+        url:"http://localhost:8080/0/5"  ///0/5 means-> min-max data to fetch
+    });
     const [httpResponse,httpError,httpLoader]=useHttp(request);
 
     useEffect(()=>{
-        if(request){
-          
+        if(request.method=='get'){
+            console.log("GETTING>>>>>")
+          if(httpResponse){
+           console.log("insidehttpResponse..")
+
+            setData(httpResponse.data)
+          }
+           
+        }
+        else{
             if(httpResponse)
             {
-            alert("data insertes to database Successfully")
+                console.log(httpResponse)
+            alert("Data Inseterted  Successfully")
             }
 
 
@@ -50,6 +63,17 @@ const Register = () => {
 
     }
     const uploadFile=e=>{
+
+        // let input=e.target;
+        // const file=input.files[0]
+        // console.log(file);
+        // const fReader= new FileReader();
+        // fReader.readAsDataURL(file);
+        // fReader.onLoad=(e)=>{
+        //     const url=e.target.result;
+        //     console.log(url);   
+        //      }
+
         let input=e.target;
         const file=input.files[0];
         console.log(file);
@@ -57,13 +81,18 @@ const Register = () => {
         fReader.readAsDataURL(file);
         fReader.onload=e=>{
             const url=e.target.result;
-            
-            setInput((oldData)=>{
-                return {...oldData,
-                    profile:url
-                }
+            return setInput((oldData)=>{
+
+                return {...oldData, profile:url};
             })
         }
+            
+        //     setInput((oldData)=>{
+        //         return {...oldData,
+        //             profile:url
+        //         }
+        //     })
+        // }
 
 
     }
@@ -80,10 +109,16 @@ const Register = () => {
 
     }
     
+    const deleteRow=(id)=>{
+       setData( data.filter((item,index)=>index!==id))
+
+    }
+
+
   return (
     <>
     <Container className='py-4'>
-       
+      
         <h1 className='text-center fw-bold'>Crud Operation in React JS</h1>
     
     <Button className='bg-danger border-0 btn-design'>
@@ -99,15 +134,28 @@ const Register = () => {
                 <th>Mobile</th>
                 <th>Email</th>
                 <th>Password</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            <td>1</td>
-            <td></td>
-            <td>nauman</td>
-            <td>12345</td>
-            <td>nauman@gmail.com</td>
-            <td>12345</td>
+          {data&&data.map((items,index)=>(
+
+              <tr key={index}>
+              <td>{index+1}</td>
+              <td>
+                <img src={items.profile} width={40} alt="" />
+              </td>
+              <td>{items.name}</td>
+              <td>{items.mobile}</td>
+              <td>{items.email}</td>
+              <td>{items.password}</td>
+              <td>
+                <button className='btn btn-primary px-2 py-1 mx2'><i className='fa fa-edit'></i></button>
+                <button className='btn btn-danger px-2 py-1 m-1' onClick={()=>deleteRow(index)}><i className='fa fa-trash'></i></button>
+              
+              </td>
+              </tr>
+          ))}
         </tbody>
 
     </Table>
@@ -171,7 +219,7 @@ const Register = () => {
             
                 <Button type="submit" className=' bg-danger border-0 w-100 mt-2 mb-3'>Regsiter</Button>
             
-                
+               
             </Form>
            </Modal.Body>
 
